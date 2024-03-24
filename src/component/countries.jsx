@@ -24,7 +24,7 @@ const CountryPicker = () => {
         bandera=  require('../imagenes/bmexico.png')
         break;
       case 'Colombia':
-        valor = 800;
+        valor = 8;
         moneda = 'COP';
         bandera=  require('../imagenes/bcolombia.png')
         break;
@@ -64,7 +64,7 @@ const CountryPicker = () => {
         <Text style={styles.text}>CUAL ES TU PAIS</Text>
         
         {bandera && <Image source={bandera} style={styles.bandera} />}
-
+    <View style={styles.selector}>
       <RNPickerSelect style={styles.RNPickerSelect}
         onValueChange={handlePickerChange}
         items={[
@@ -78,9 +78,9 @@ const CountryPicker = () => {
           // Agrega más países según sea necesario
         ]}value={pais}
       />
-
+</View > 
       <Text style={styles.text}> El valor consumo por  KW/H : {valor} {moneda}</Text>
-      <ConsumoDatosComponent valor={valor}/>
+       <ConsumoDatosComponent valor={valor}/>   
     </View>
     
   );
@@ -107,7 +107,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   RNPickerSelect:{
-    borderRadius:12
+    borderRadius:12,
+    
   },
   bandera: {
     width: 60, // Ajusta el ancho según las medidas de tu bandera
@@ -115,6 +116,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+  selector:{
+    width: '99%',
+    backgroundColor:'white',
+    borderRadius:10,
+    shadowOffset:2
+  }
 });
 
 export default CountryPicker;

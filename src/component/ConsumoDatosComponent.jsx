@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Animated, Easing, StyleSheet, TouchableOpacity } from 'react-native';
 
-
+//constantes y usestates 
 const ConsumoDatosComponent = ({valor}) => {
+//consumos
   const [consumoTotal, setConsumoTotal] = useState(0);
+//lista de electrodomesticos
   const [electrodomesticos, setElectrodomesticos] = useState([]);
+//agregar nuevos electrodomesticos a la lista de arriba  
   const [nuevoElectrodomestico, setNuevoElectrodomestico] = useState('');
+// se agrega un input para ver el tiempo de uso  
+  const [nuevoElectrodomesticotiempo, setNuevoElectrodomesticotiempo] = useState('');
+// se agrega  para  tomar el valor de la suma de las horas de uso 
+const [horas,sethoras]=useState(0)  ;
+//se agrega un input para ingresar el consumo   
   const [consumoElectrodomestico, setConsumoElectrodomestico] = useState('');
+// se agrega funcion para mostra el resultado de hora semana y mes   
   const [resultado, setResultado] = React.useState(null);
   const [consumosemana, setconsumosemana] = useState(0);
   const [consumoQuincenal, setconsumoQuincenal] = useState(0);
   const [consumoMes, setconsumoMes] = useState(0);
-
+// se agrega para configurar animacion
   const animatedValue = new Animated.Value(1);
   // Lógica para obtener el costo por kWh según el país seleccionado
   const obtenerCostoPorKwh = () => {
@@ -27,23 +36,27 @@ const ConsumoDatosComponent = ({valor}) => {
 
   const agregarElectrodomestico = () => {
     if (nuevoElectrodomestico && consumoElectrodomestico) {
-      const nuevoConsumoTotal =
-        consumoTotal + parseFloat(consumoElectrodomestico);
+      const nuevoConsumoTotal = consumoTotal + parseFloat(consumoElectrodomestico);
+      const nuevotiempo =  horas + parseFloat(nuevoElectrodomesticotiempo);
       setConsumoTotal(nuevoConsumoTotal);
+      sethoras(nuevotiempo);
+      
 
       const nuevoElectrodomesticos = [
         ...electrodomesticos,
         {
           nombre: nuevoElectrodomestico,
           consumo: parseFloat(consumoElectrodomestico),
+          tiempo: nuevoElectrodomesticotiempo
         },
       ];
 
       setElectrodomesticos(nuevoElectrodomesticos);
       setNuevoElectrodomestico('');
       setConsumoElectrodomestico('');
+      setNuevoElectrodomesticotiempo('');
 
-      // Animación del resultado de la suma
+// Animación del resultado de la suma
       Animated.sequence([
         Animated.timing(animatedValue, {
           toValue: 1.2,
@@ -59,10 +72,12 @@ const ConsumoDatosComponent = ({valor}) => {
       ]).start();
     }
   };
-
+//borrar array electrodomesticos
   const Borrardatos= () =>{
     setElectrodomesticos([]);
     setConsumoTotal(0);
+    sethoras(0);
+    
   }
 //agregamos  la funcion para hacer la suma tomando el  estaod del valo de  countries 
 const realizarOperacion = () => {
@@ -75,7 +90,9 @@ const realizarOperacion = () => {
   setconsumoQuincenal(consumoQuincenales);
   setconsumoMes(consumoMensual);
   setResultado(consumofinal);
-  console.log('Resultado de la operación:', consumofinal);
+  console.log('Resultado de la operación:', consumosemanal);
+  console.log('Resultado de la operación:', consumoQuincenales);
+  console.log('Resultado de la operación:', consumoMensual);
   
   
 };
@@ -84,7 +101,7 @@ const realizarOperacion = () => {
   const animatedStyle = {
     transform: [{ scale: animatedValue }],
   };
-
+// vamos a renderisar el componente  
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}> ¡COMENCEMOS!</Text>
@@ -105,6 +122,13 @@ const realizarOperacion = () => {
           value={consumoElectrodomestico}
           onChangeText={(text) => setConsumoElectrodomestico(text)}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="tiempo de uso"
+          keyboardType="numeric"
+          value={nuevoElectrodomesticotiempo}
+          onChangeText={(text) => setNuevoElectrodomesticotiempo(text)}
+        />
         
         <Button color="#56C596"  title="Agrega tus Electrodoméstico" onPress={agregarElectrodomestico} />
         
@@ -112,7 +136,7 @@ const realizarOperacion = () => {
         <Text style={styles.label}>Electrodomésticos Agregados:</Text>
         {electrodomesticos.map((electrodomestico, index) => (
           <Text key={index} style={styles.listado}>
-            {electrodomestico.nombre}: {electrodomestico.consumo} kWh
+            {electrodomestico.nombre}: {electrodomestico.consumo} kWh, Uso {electrodomestico.tiempo} HORAS
           </Text>
           
         ))}
@@ -120,7 +144,7 @@ const realizarOperacion = () => {
         
       </View>
       <Animated.Text style={[styles.totalLabel, animatedStyle]}>
-         Consumo  de tus electrodomesticos : {consumoTotal} kWh
+         Consumo  de tus electrodomesticos : {consumoTotal} kWh  tiempo {horas}
         </Animated.Text>
         <Text>Valor en el Componente Hijo: {valor}</Text>
         
@@ -130,10 +154,10 @@ const realizarOperacion = () => {
       
       {resultado !== null && (
         <View>
-        <Text>Total KW por hora :{resultado} </Text>
-        <Text>Total KW por semana : {consumosemana} </Text>
-        <Text>Total KW por Quincena : {consumoQuincenal} </Text>
-        <Text>Total KW por Mes : {consumoMes} </Text>
+        <Text>Total KW por hora : ${resultado} </Text>
+        <Text>Total KW por semana : ${consumosemana} </Text>
+        <Text>Total KW por Quincena : ${consumoQuincenal} </Text>
+        <Text>Total KW por Mes : ${consumoMes} </Text>
         </View>
       )}
       
@@ -146,24 +170,26 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     alignItems: 'center',
     backgroundColor: 'white',
+    width:'99%',
     borderRadius: 15,
     padding: 30,
     paddingHorizontal:20,
   },
   header: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color:'white',
     marginBottom: 10,
     paddingHorizontal: 40,
     textAlign:'center',
-    //backgroundColor: ' #379F7A',
+    
   },
   titulo:{
     color:'#56C596',
     fontWeight:'bold',
-    fontSize:40,
+    fontSize:20,
     textDecorationLine: 'underline',
+    padding:5,
     
     
 
@@ -210,7 +236,7 @@ const styles = StyleSheet.create({
     paddingBottom:10,
   },
   botoninfo:{
-    backgroundColor: 'blue',
+    backgroundColor: '#957DAD',
     padding: 10,
     borderRadius:15,
     color: 'white',
