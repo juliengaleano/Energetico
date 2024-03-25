@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Animated, Easing, StyleSheet, TouchableOpacity } from 'react-native';
+import DivisionConsumo from './DivisionConsumo';
 
 //constantes y usestates 
 const ConsumoDatosComponent = ({valor}) => {
@@ -34,8 +35,10 @@ const [horas,sethoras]=useState(0)  ;
     return costosPorPais[paisSeleccionado] || 0;
   };
 
-  const agregarElectrodomestico = () => {
-    if (nuevoElectrodomestico && consumoElectrodomestico) {
+  const agregarElectrodomestico = () => {//comienza funcion agregar electrodomestico
+
+    if (nuevoElectrodomestico && consumoElectrodomestico) {//abre if
+      
       const nuevoConsumoTotal = consumoTotal + parseFloat(consumoElectrodomestico);
       const nuevotiempo =  horas + parseFloat(nuevoElectrodomesticotiempo);
       setConsumoTotal(nuevoConsumoTotal);
@@ -70,8 +73,8 @@ const [horas,sethoras]=useState(0)  ;
           useNativeDriver: true,
         }),
       ]).start();
-    }
-  };
+    }//cierra if
+  };//termina funcion agregar electrodomestico
 //borrar array electrodomesticos
   const Borrardatos= () =>{
     setElectrodomesticos([]);
@@ -101,6 +104,7 @@ const realizarOperacion = () => {
   const animatedStyle = {
     transform: [{ scale: animatedValue }],
   };
+  
 // vamos a renderisar el componente  
   return (
     <View style={styles.container}>
@@ -129,37 +133,49 @@ const realizarOperacion = () => {
           value={nuevoElectrodomesticotiempo}
           onChangeText={(text) => setNuevoElectrodomesticotiempo(text)}
         />
+        <TouchableOpacity style={styles.btnagregar}  onPress={agregarElectrodomestico}  >
+            <Text style={styles.btntipoletra}>Agregar Electrodomésticos</Text>
+        </TouchableOpacity>
         
-        <Button color="#56C596"  title="Agrega tus Electrodoméstico" onPress={agregarElectrodomestico} />
         
 
         <Text style={styles.label}>Electrodomésticos Agregados:</Text>
+        <View style={styles.itemadd}> 
         {electrodomesticos.map((electrodomestico, index) => (
           <Text key={index} style={styles.listado}>
             {electrodomestico.nombre}: {electrodomestico.consumo} kWh, Uso {electrodomestico.tiempo} HORAS
           </Text>
           
-        ))}
-        <Button  title="Borrar listado" color="red" fontWeight="bold" onPress={Borrardatos} />
+        ))} 
+
+        </View>
+       
+        <TouchableOpacity style={styles.btncancelar} onPress={Borrardatos} >
+            <Text style={styles.btntipoletra}> Borrar Listado</Text>
+        </TouchableOpacity>
+        
         
       </View>
       <Animated.Text style={[styles.totalLabel, animatedStyle]}>
-         Consumo  de tus electrodomesticos : {consumoTotal} kWh  tiempo {horas}
+         Consumo Total : 
+         
         </Animated.Text>
-        <Text>Valor en el Componente Hijo: {valor}</Text>
+        <DivisionConsumo  
+        consumoTotal={consumoTotal} 
+        horas={horas}
+        resultado={resultado}
+        consumosemana={consumosemana}
+        consumoQuincenal={consumoQuincenal}
+        consumoMes={consumoMes} 
+        valor={valor}/>
         
+       {/* 
+       <Text>Valor en el Componente Hijo: {valor}</Text>
         <TouchableOpacity  style={styles.botoninfo} onPress={realizarOperacion}  >
             <Text style={{color:'white', fontWeight: 'bold', fontSize:20}}> Mira tu consumo sera de :</Text>
         </TouchableOpacity>
+        */}
       
-      {resultado !== null && (
-        <View>
-        <Text>Total KW por hora : ${resultado} </Text>
-        <Text>Total KW por semana : ${consumosemana} </Text>
-        <Text>Total KW por Quincena : ${consumoQuincenal} </Text>
-        <Text>Total KW por Mes : ${consumoMes} </Text>
-        </View>
-      )}
       
     </View>
   );
@@ -242,6 +258,37 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     paddingHorizontal:50
+  },
+  btnagregar:{
+    backgroundColor: '#40FF68',
+    padding: 10,
+    borderRadius:15,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingHorizontal:50,
+    alignItems:'center'
+  },
+  btntipoletra:{
+    fontSize:20,
+    fontWeight:'bold',
+    color:'white',
+    
+  },
+  btncancelar:{
+    backgroundColor: '#FC5D70',
+    padding: 10,
+    borderRadius:15,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingHorizontal:50,
+    alignItems:'center'
+  },
+  itemadd:{
+    backgroundColor:'white',
+    padding:5,
+    borderRadius:10,
+    alignItems:'center',
+    margin:5
   }
 
 });

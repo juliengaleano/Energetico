@@ -24,7 +24,7 @@ const CountryPicker = () => {
         bandera=  require('../imagenes/bmexico.png')
         break;
       case 'Colombia':
-        valor = 8;
+        valor = 800;
         moneda = 'COP';
         bandera=  require('../imagenes/bcolombia.png')
         break;
